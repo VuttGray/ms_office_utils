@@ -209,7 +209,10 @@ class XlsxReadOnlyManager:
                 yield cell
 
 
-def read_data(file_path: str, fixed_columns_number: int):
+def read_data(file_path: str,
+              fixed_columns_number: int,
+              transposed_column_name: str,
+              default_value_column: str):
     xl = XlsxReadOnlyManager(file_path)
     headers = xl.get_headers(None, 0)
     fixed_headers = {}
@@ -218,27 +221,37 @@ def read_data(file_path: str, fixed_columns_number: int):
         if i < fixed_columns_number or fixed_columns_number == -1:
             fixed_headers[k] = v
         else:
-            header_parts = v.split('-')
-            value_column = header_parts[-1].strip()
-            title = '-'.join(header_parts[:-1]).strip()
-            transposed_headers[k] = {'title_column': 'Visit',
+            header_parts = v.split(' - ')
+            if len(header_parts) == 1:
+                value_column = default_value_column
+                title = v
+            else:
+                value_column = header_parts[-1].strip()
+                title = ' - '.join(header_parts[:-1]).strip()
+            transposed_headers[k] = {'title_column': transposed_column_name,
                                      'title': title,
                                      'value_column': value_column}
     return xl.get_data(1, 10000, 0, len(headers), fixed_headers, transposed_headers)
 
 
-def excel2json(xl_path: str, json_path: str, fixed_columns_number: int = -1) -> None:
+def excel2json(xl_path: str,
+               json_path: str,
+               fixed_columns_number: int = -1,
+               transposed_column_name: str = "Repeated column",
+               default_value_column: str = "Value") -> None:
     """
     Read data from a table in Excel file and export the result as a json file
     :param xl_path: path to the source Excel file
     :param json_path: path to the target json file
-    :param fixed_columns_number: number of fixed columns, the columns that will be exported as main attributes,
+    :param fixed_columns_number: number of fixed columns, the columns that will be exported as main attributes
+    :param transposed_column_name: the union name for repeated (transposed) columns
+    :param default_value_column: the default name for value attribute of repeated (transposed) columns
     other columns will be transposed and exported as different rows.
     Specify -1 if you what export all columns as a main attribute (header)
     :return: None
 
-    example: excel2json(r'C:\SomeFolder\Subjects.xlsx', r'C:\SomeFolder\subjects.json', 1)
+    example: excel2json(r'C:\SomeFolder\Subjects.xlsx', r'C:\SomeFolder\subjects.json', 1, 'Visit', 'Visit date')
     """
-    data = read_data(xl_path, fixed_columns_number)
+    data = read_data(xl_path, fixed_columns_number, transposed_column_name, default_value_column)
     with open(json_path, 'w') as fp:
         dump(data, fp, indent=4)

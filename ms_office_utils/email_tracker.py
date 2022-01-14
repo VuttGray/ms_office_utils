@@ -76,7 +76,6 @@ class Email:
                 received_time = self.__mail_item.SentOn.replace(tzinfo=None)
             else:
                 received_time = None
-                pass
         return timezone(conf.time_zone).localize(received_time)
 
     @property
