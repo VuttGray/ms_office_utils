@@ -231,7 +231,7 @@ def read_data(file_path: str,
             transposed_headers[k] = {'title_column': transposed_column_name,
                                      'title': title,
                                      'value_column': value_column}
-    return xl.get_data(1, 10000, 0, len(headers), fixed_headers, transposed_headers)
+    return xl.get_data(1, 100000, 0, len(headers), fixed_headers, transposed_headers)
 
 
 def excel2json(xl_path: str,
@@ -253,5 +253,5 @@ def excel2json(xl_path: str,
     example: excel2json(r'C:\SomeFolder\Subjects.xlsx', r'C:\SomeFolder\subjects.json', 1, 'Visit', 'Visit date')
     """
     data = read_data(xl_path, fixed_columns_number, transposed_column_name, default_value_column)
-    with open(json_path, 'w') as fp:
-        dump(data, fp, indent=4)
+    with open(json_path, 'w', encoding="utf-8") as fp:
+        dump(data, fp, indent=4, ensure_ascii=False)
