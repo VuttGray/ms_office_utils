@@ -67,6 +67,9 @@ class OutlookWrapper:
                     counters[folder.Name + "/" + key] = sub_counters[key]
         return counters
 
+    def get_account_folder(self, account_name):
+        return self.__outlook.Folders(account_name)
+    
     def sent_items_counter(self, date):
         count = 0
         sent_items = self.__sent_items.Items
