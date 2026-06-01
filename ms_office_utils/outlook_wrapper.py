@@ -36,6 +36,10 @@ class OutlookWrapper:
     def sent_items(self):
         return self.__sent_items
 
+    @property
+    def deleted(self):
+        return self.__deleted
+
     def __init__(self):
         try:
             self.__outlook = EnsureDispatch("Outlook.Application").GetNamespace("MAPI")
@@ -50,6 +54,7 @@ class OutlookWrapper:
         # 9 Calendar, 10 Contacts, 11 Journal, 12 Notes, 13 Tasks, 14 Drafts
         self.__inbox = self.__outlook.GetDefaultFolder(6)
         self.__sent_items = self.__outlook.GetDefaultFolder(5)
+        self.__deleted = self.__outlook.GetDefaultFolder(3)
 
     @staticmethod
     def folder_counters(folder) -> dict:
