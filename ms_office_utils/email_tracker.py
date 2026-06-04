@@ -109,7 +109,7 @@ class Email:
         self.__is_deleted = False
 
     def __repr__(self):
-        return f"[{self.received_time.strftime('%d-%b-%Y %H:%M')} {self.sender_name} {self.subject} {self.id}]"
+        return f"{self.received_time.strftime('%d-%b-%Y %H:%M')} {self.sender_name} {self.subject} {self.id}"
 
     def read(self):
         self.__mail_item.UnRead = False
